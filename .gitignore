@@ -1,0 +1,35 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/.next-dev/
+/out/
+/build
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
+
+# env files
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# the OpenStreetMap download scripts/build-map.mjs caches (rebuild with --refresh)
+/scripts/.cache/
+
+# direction sketches, screenshots and test frames, kept on this machine only
+/design/
+
+# personal notes and local tool config, not part of the site
+/.claude/
+
+# Python bytecode from the Blender scripts
+__pycache__/

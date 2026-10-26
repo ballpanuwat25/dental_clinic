@@ -1,0 +1,241 @@
+:root {
+  --bg: #f3f6f6;
+  --sky-pale: #e4f1f8;
+  --sky: #9cd0ea;
+  --sky-deep: #2f7fb1;
+  --mint: #6fcfb3;
+  --mint-deep: #23866c;
+  --ink: #13324a;
+  --ink-soft: #2b4a60;
+  --muted: #5b7487;
+  --line: #13324a33;
+  --line-strong: #13324a59;
+  --display: var(--font-display), system-ui, sans-serif;
+  --body: var(--font-body), system-ui, sans-serif;
+  --gutter: clamp(16px, 5vw, 80px);
+}
+
+* { box-sizing: border-box; margin: 0; }
+html { scrollbar-gutter: stable; }
+html.lenis { scroll-behavior: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.7;
+  -webkit-tap-highlight-color: transparent;
+}
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+ul { margin: 0; padding: 0; list-style: none; }
+.nw { white-space: nowrap; }
+
+/* ---- the bar ---- */
+.bar {
+  position: fixed; inset: 0 0 auto 0; z-index: 30;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 18px var(--gutter);
+  pointer-events: none;
+}
+.bar > * { pointer-events: auto; }
+html[data-bar-solid="true"] .bar { background: var(--bg); border-bottom: 1px solid var(--line); }
+.mark { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.mark svg { width: 34px; height: 30px; flex: none; }
+.mark b { display: block; font: 600 22px/1.2 var(--display); letter-spacing: -.01em; }
+.mark small { display: block; font: 400 12px/1.3 var(--body); color: var(--muted); }
+.bar nav { display: flex; gap: 28px; font-size: 15px; }
+.bar nav a { text-decoration: none; }
+.book {
+  display: inline-block;
+  font: 500 15px/1 var(--display);
+  padding: 14px 22px 13px;
+  border-radius: 999px;
+  background: var(--ink); color: var(--bg);
+  text-decoration: none; white-space: nowrap;
+}
+@media (max-width: 860px) { .bar nav { display: none; } }
+
+/* ---- the stage: three scenes on one pinned screen ---- */
+.stage { position: relative; height: 100svh; min-height: 700px; overflow: hidden; --x: 50%; --y: 55%;
+  --foot: 70px; --menu: 80px; --floor: calc(var(--foot) + var(--menu));
+  --size: min(25vw, 44vh); --tooth: min(40vw, 66vh); --inset: 28px; --round: 20px; }
+.stage .frame { position: absolute; inset: 96px var(--gutter) var(--foot); border: 1px solid var(--line); border-radius: var(--round); }
+.stage .floor { position: absolute; left: calc(var(--gutter) + var(--cut, 0px)); right: calc(var(--gutter) + var(--cut, 0px)); bottom: var(--floor); border-top: 1px solid var(--line-strong); }
+/* in the booking scene the floor line has climbed to the ring's middle and parts round it */
+.stage .rule { position: absolute; border-top: 1px solid var(--line-strong); visibility: hidden; }
+
+/* the name stands on the floor, its two words parted by the tooth */
+.word { position: absolute; left: 0; right: 0; bottom: var(--floor); display: flex; justify-content: center; align-items: flex-end;
+  gap: calc(var(--tooth) * .6); pointer-events: none; font-size: var(--size);
+  /* the outline's outer half hangs 1.2px below the ink, so the letters' foot and the floor line become one stroke */
+  translate: 0 -1.2px; }
+.word > span { display: block; flex: none; }
+.word svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.word.hollow path { fill: var(--bg); stroke: #13324a66; stroke-width: 2.4px; vector-effect: non-scaling-stroke; paint-order: stroke fill; stroke-linejoin: round; }
+.word.lit {
+  -webkit-mask-image: radial-gradient(circle min(20vw, 240px) at var(--x) var(--y), #000 30%, transparent 72%);
+  mask-image: radial-gradient(circle min(20vw, 240px) at var(--x) var(--y), #000 30%, transparent 72%);
+}
+/* the tooth is kept inside the frame, so its shadow never crosses the frame's edge */
+.stage .tooth-box { position: absolute; z-index: 2; inset: 96px var(--gutter) var(--foot); overflow: hidden; border-radius: var(--round); pointer-events: none; }
+/* the crop cuts the faintest edge of its shadow, so the right and bottom edges, where there is only shadow, fade out */
+.stage .tooth { position: absolute; left: 0; top: 0;
+  -webkit-mask-image: linear-gradient(to right, #000 84%, transparent), linear-gradient(to bottom, #000 84%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, #000 84%, transparent), linear-gradient(to bottom, #000 84%, transparent);
+  mask-composite: intersect; }
+
+.stage .copy, .packs-head { position: absolute; z-index: 3; left: calc(var(--gutter) + var(--inset)); top: 124px; width: min(34vw, 460px); }
+.where { font: 500 14px/1.4 var(--display); color: var(--muted); margin-bottom: 10px; }
+.stage h1, .packs-head h2 { font: 600 clamp(26px, 2.4vw, 36px)/1.28 var(--display); }
+.next { position: absolute; z-index: 3; right: calc(var(--gutter) + var(--inset)); top: 124px; text-align: right; }
+.next p { font: 500 14px/1.4 var(--display); color: var(--muted); }
+.next strong { display: block; min-height: 1.2em; margin: 4px 0 14px; font: 600 clamp(24px, 2.2vw, 32px)/1.2 var(--display); font-variant-numeric: tabular-nums; }
+.next strong span { font-weight: 500; color: var(--muted); font-size: .6em; }
+.next small { display: block; font-size: 14px; color: var(--muted); margin-top: 12px; }
+.menu { position: absolute; z-index: 3; left: var(--gutter); right: var(--gutter); bottom: var(--foot); height: var(--menu);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 var(--inset); }
+.menu li { font: 500 15px/1.3 var(--display); white-space: nowrap; }
+.menu li b { display: block; font-weight: 500; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* scene 2: packages on the left, each with a leader line to the part of the tooth it treats */
+.packs-head { visibility: hidden; }
+.packs-head p:last-child { margin-top: 10px; color: var(--ink-soft); max-width: 24rem; }
+.packs { position: absolute; z-index: 3; left: calc(var(--gutter) + var(--inset)); top: 290px; width: min(36vw, 470px); }
+.packs li { visibility: hidden; display: grid; grid-template-columns: 1fr auto; gap: 2px 20px; padding: 16px 0; border-top: 1px solid var(--line); }
+.packs b { font: 500 19px/1.3 var(--display); }
+.packs span { grid-column: 1; font-size: 14px; color: var(--muted); }
+.packs em { grid-column: 2; grid-row: 1 / 3; align-self: center; font: 600 19px/1 var(--display); font-style: normal; font-variant-numeric: tabular-nums; }
+.leads { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; pointer-events: none; overflow: visible; visibility: hidden; }
+.leads path { fill: none; stroke: var(--ink); stroke-width: 1; }
+.leads circle { fill: var(--bg); stroke: var(--ink); stroke-width: 1.2; }
+
+/* scene 3: the tooth ringed at the top, the booking form under it */
+.rings { position: absolute; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.rings circle { fill: none; stroke: var(--line-strong); stroke-width: 1; }
+.rings .orbit { stroke-dasharray: 2 7; transform-box: fill-box; transform-origin: center; animation: orbit 80s linear infinite; }
+@keyframes orbit { to { rotate: 360deg; } }
+.book-form { position: absolute; z-index: 3; left: 50%; translate: -50% 0; width: min(760px, calc(100% - 2 * var(--gutter) - 2 * var(--inset)));
+  visibility: hidden; text-align: center; }
+.book-form h2 { font: 600 clamp(28px, 2.6vw, 40px)/1.2 var(--display); }
+.book-form > p { margin-top: 6px; color: var(--muted); font-size: 15px; }
+/* the form reads as a ruled table: a label column, then the choices from the left */
+.pick { display: grid; grid-template-columns: 132px 1fr; gap: 16px; align-items: center; padding: 16px 0; border-top: 1px solid var(--line); text-align: left; }
+.book-form > p + .pick { margin-top: 24px; }
+.pick > span { font: 500 14px/1.3 var(--display); color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips button { font: 500 15px/1 var(--display); padding: 11px 16px 10px; border: 1px solid var(--line-strong); border-radius: 999px; font-variant-numeric: tabular-nums; }
+.chips button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.chips.times button { border-color: var(--mint); }
+.chips.times button[aria-pressed="true"] { background: var(--mint-deep); border-color: var(--mint-deep); }
+.chips > span { font-size: 15px; color: var(--muted); }
+.sum { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 18px; border-top: 1px solid var(--line-strong); text-align: left; }
+.sum p { font: 500 16px/1.4 var(--display); font-variant-numeric: tabular-nums; }
+.sum p small { display: block; font: 400 13px/1.4 var(--body); color: var(--muted); }
+
+/* ---- sections after the stage ---- */
+.team, .findus { padding: 96px calc(var(--gutter) + 28px) 40px; }
+.sec-head h2, .findus h2 { font: 600 clamp(32px, 3.4vw, 48px)/1.2 var(--display); letter-spacing: -.01em; }
+.sec-head p, .findus .lede { margin-top: 12px; max-width: 34rem; color: var(--ink-soft); }
+.book.line { background: none; color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+
+/* the team: a ruled row per dentist, today drawn as a line from opening to closing */
+.team-rows { margin-top: 48px; border-bottom: 1px solid var(--line); }
+.team-rows > li { display: grid; grid-template-columns: minmax(220px, 1fr) 2.2fr minmax(200px, .9fr); gap: 48px; align-items: center; padding: 30px 0; border-top: 1px solid var(--line); }
+.who b { display: block; font: 600 20px/1.3 var(--display); }
+.who span { display: block; margin-top: 2px; font-size: 14px; color: var(--muted); }
+.day { position: relative; height: 46px; }
+.day::before { content: ""; position: absolute; left: 0; right: 0; top: 14px; border-top: 1px solid var(--line-strong); }
+.day i { position: absolute; font-style: normal; }
+.day .hr { top: 8px; width: 1px; height: 12px; background: var(--line-strong); }
+.day .hr em { position: absolute; top: 18px; left: 0; translate: -50% 0; font: 500 12px/1 var(--display); font-style: normal; color: var(--muted); font-variant-numeric: tabular-nums; }
+.day .free { top: 14px; width: 8px; height: 8px; border-radius: 50%; background: var(--mint); translate: -50% -50%; }
+.day .taken { top: 14px; width: calc(5% - 6px); height: 3px; border-radius: 2px; background: var(--line); translate: -50% -50%; }
+.day .past { opacity: .3; }
+.team .go { text-align: right; }
+.team .go p { min-height: 1.5em; margin-bottom: 10px; font-size: 14px; color: var(--muted); }
+.team .go p b { font: 600 18px/1 var(--display); color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* where: the facts beside a map cropped to the walk */
+.findus { display: grid; grid-template-columns: 1fr 1.25fr; gap: 64px; align-items: start; padding-bottom: 120px; }
+.findus dl { margin-top: 36px; border-bottom: 1px solid var(--line); }
+.findus dl > div { display: grid; grid-template-columns: 96px 1fr; gap: 16px; padding: 14px 0; border-top: 1px solid var(--line); }
+.findus dt { font: 500 14px/1.6 var(--display); color: var(--muted); }
+.findus dd { margin: 0; font: 500 16px/1.6 var(--display); }
+.map { border: 1px solid var(--line); border-radius: var(--round, 20px); overflow: hidden; background: #f7f9f9; }
+.map svg { display: block; width: 100%; height: auto; }
+.map small { display: block; padding: 8px 14px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.m-lane { fill: none; stroke: #13324a1a; stroke-width: 1; }
+.m-street { fill: none; stroke: #13324a40; stroke-width: 1.6; stroke-linecap: round; }
+.m-major { fill: none; stroke: #13324a73; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+/* the Yellow Line, in its own yellow */
+.m-rail { fill: none; stroke: #f2c200; stroke-width: 3; }
+.m-walk { fill: none; stroke: var(--sky-deep); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.6s cubic-bezier(.6, 0, .3, 1) .2s; }
+.map.is-walked .m-walk { stroke-dashoffset: 0; }
+.m-station { fill: #f2c200; stroke: #f7f9f9; stroke-width: 2.5; }
+.m-place { font: 500 9.5px var(--display); fill: var(--ink); paint-order: stroke; stroke: #f7f9f9; stroke-width: 3px; stroke-linejoin: round; }
+.m-code { font-size: 7.5px; fill: var(--muted); }
+.m-clinic circle { fill: var(--ink); }
+.m-clinic path { fill: var(--bg); }
+.m-mark { font: 600 12px var(--display); fill: var(--ink); }
+
+/* the foot */
+.foot { padding: 56px calc(var(--gutter) + 28px) 48px; margin: 0 var(--gutter); border-top: 1px solid var(--line); font-size: 14px; }
+.foot-row { display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr; gap: 32px; align-items: start; }
+.foot-row span { display: block; color: var(--muted); }
+.foot-row b { display: block; font: 600 16px/1.5 var(--display); }
+.foot-mark { display: flex; gap: 12px; align-items: flex-start; }
+.foot-mark svg { width: 34px; height: 30px; flex: none; }
+.foot-mark span { max-width: 22rem; }
+.foot nav { display: grid; gap: 4px; }
+.foot nav a { text-decoration: none; }
+.foot-demo { margin-top: 48px; font-size: 13px; color: var(--muted); }
+
+/* the first-load screen: the molar fills with sky from the roots up */
+.loader { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; background: var(--bg); }
+.loader-mark { text-align: center; }
+.loader svg { width: 104px; height: 87px; overflow: visible; }
+.loader rect { fill: var(--sky); }
+.loader path { fill: none; stroke: var(--ink); stroke-width: 1.3px; vector-effect: non-scaling-stroke; }
+.loader p { margin-top: 14px; font: 500 15px/1 var(--display); color: var(--muted); }
+
+@media (max-width: 860px) {
+  .stage { min-height: 780px; --foot: 64px; --menu: 132px; --size: 19.5vw; --tooth: 72vw; --inset: 16px; }
+  .stage .frame, .stage .tooth-box { inset: 84px 12px var(--foot); }
+  .stage .floor, .menu { left: calc(12px + var(--cut, 0px)); right: calc(12px + var(--cut, 0px)); }
+  .stage .copy, .packs-head { left: 28px; right: 28px; width: auto; top: 108px; }
+  .stage h1, .packs-head h2 { font-size: 23px; }
+  .packs-head p:last-child { display: none; }
+  .next { left: 28px; right: 28px; top: 214px; text-align: left; display: grid; grid-template-columns: 1fr auto; align-items: end; column-gap: 12px; }
+  .next p, .next strong { grid-column: 1; }
+  .next strong { margin-bottom: 0; font-size: 22px; }
+  .next .book { grid-column: 2; grid-row: 1 / 3; }
+  .next small { display: none; }
+  .menu { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 8px; align-content: center; }
+  .menu li { font-size: 14px; white-space: normal; }
+  .packs { left: 28px; right: 28px; width: auto; top: auto; bottom: calc(var(--foot) + 12px); }
+  .packs li { padding: 10px 0; }
+  .packs b, .packs em { font-size: 16px; }
+  .packs span { font-size: 13px; }
+  .leads { display: none; }
+  .pick { grid-template-columns: 1fr; gap: 8px; padding: 10px 0; }
+  .book-form > p + .pick { margin-top: 14px; }
+  .pick > span { font-size: 13px; }
+  .chips button { font-size: 14px; padding: 9px 12px 8px; }
+  .book-form h2 { font-size: 24px; }
+  .sum { padding-top: 12px; }
+  .sum p { font-size: 14px; }
+
+  .team, .findus { padding: 110px 28px 32px; }
+  .team-rows > li { grid-template-columns: 1fr; gap: 16px; padding: 24px 0; }
+  .team .go { display: flex; align-items: center; justify-content: space-between; text-align: left; }
+  .team .go p { margin: 0; }
+  .day .hr em { font-size: 10px; }
+  .day .hr:nth-child(even) em { visibility: hidden; }
+  .findus { grid-template-columns: 1fr; gap: 32px; padding-bottom: 80px; }
+  .foot { margin: 0 12px; padding: 40px 16px 100px; }
+  .foot-row { grid-template-columns: 1fr 1fr; }
+  .foot-mark { grid-column: 1 / -1; }
+}
