@@ -62,7 +62,7 @@ html[data-bar-solid="true"] .bar { background: var(--bg); border-bottom: 1px sol
   --foot: 70px; --menu: 80px; --floor: calc(var(--foot) + var(--menu));
   --size: min(25vw, 44vh); --tooth: min(40vw, 66vh); --inset: 28px; --round: 20px; }
 .stage .frame { position: absolute; inset: 96px var(--gutter) var(--foot); border: 1px solid var(--line); border-radius: var(--round); }
-.stage .floor { position: absolute; left: calc(var(--gutter) + var(--cut, 0px)); right: calc(var(--gutter) + var(--cut, 0px)); bottom: var(--floor); border-top: 1px solid var(--line-strong); }
+.stage .floor { position: absolute; left: var(--gutter); right: var(--gutter); bottom: var(--floor); border-top: 1px solid var(--line-strong); }
 /* in the booking scene the floor line has climbed to the ring's middle and parts round it */
 .stage .rule { position: absolute; border-top: 1px solid var(--line-strong); visibility: hidden; }
 
@@ -204,7 +204,7 @@ html[data-bar-solid="true"] .bar { background: var(--bg); border-bottom: 1px sol
 @media (max-width: 860px) {
   .stage { min-height: 780px; --foot: 64px; --menu: 132px; --size: 19.5vw; --tooth: 72vw; --inset: 16px; }
   .stage .frame, .stage .tooth-box { inset: 84px 12px var(--foot); }
-  .stage .floor, .menu { left: calc(12px + var(--cut, 0px)); right: calc(12px + var(--cut, 0px)); }
+  .stage .floor, .menu { left: 12px; right: 12px; }
   .stage .copy, .packs-head { left: 28px; right: 28px; width: auto; top: 108px; }
   .stage h1, .packs-head h2 { font-size: 23px; }
   .packs-head p:last-child { display: none; }

@@ -127,9 +127,10 @@ export default function Stage({ booked }: { booked: Booked }) {
         const bodyH = (TURN.feet - TURN.top) * ch;
         const bodyW = TURN.bw * cw;
         // scene 2: standing at the right, the body most of the frame's height (on a phone, centred above the list)
-        // on a wide screen the floor drops onto the frame's own bottom edge, so no strip is left under it
-        const pFloor = phone.matches ? H * 0.56 : frame.offsetTop + frame.offsetHeight - 1;
-        const pScale = phone.matches ? 1.25 : Math.min(((pFloor - 130) * 0.82) / bodyH, (W * 0.4) / bodyW);
+        // on a wide screen it stands on the frame's own bottom edge; on a phone, clear above the list, with room
+        // for its shadow
+        const pFloor = phone.matches ? q('.packs').offsetTop - 36 : frame.offsetTop + frame.offsetHeight - 1;
+        const pScale = phone.matches ? 1.1 : Math.min(((pFloor - 130) * 0.82) / bodyH, (W * 0.4) / bodyW);
         const pX = phone.matches ? W / 2 : W * 0.68;
         // scene 3: small, centred near the top, in its ring
         const bScale = (phone.matches ? 64 : 100) / bodyH;
@@ -171,7 +172,6 @@ export default function Stage({ booked }: { booked: Booked }) {
       }
       layout();
 
-      gsap.set(floor, { '--cut': '0px' });
       const tl = gsap.timeline({ defaults: { ease: 'power2.inOut' } })
         // scene 1 → 2: the name parts, the tooth turns and comes forward on the right
         .to(['.copy', '.next'], { autoAlpha: 0, y: -16, duration: 0.08, ease: 'power1.in' }, 0)
@@ -181,7 +181,9 @@ export default function Stage({ booked }: { booked: Booked }) {
         .to(turn, { f: TURN.count - 1, duration: 0.34, ease: 'power1.inOut', onUpdate: () => draw() }, 0.04)
         .to(canvas, { x: () => G.p.x, y: () => G.p.y, scale: () => G.p.scale, duration: 0.34 }, 0.04)
         // where the floor lands on the frame's bottom edge it stops short of the rounded corners
-        .to(floor, { y: () => G.floorRise, '--cut': () => (phone.matches ? '0px' : getComputedStyle(stage).getPropertyValue('--round').trim()), duration: 0.34 }, 0.04)
+        // the floor line goes down with the tooth and fades: in the packages scene the frame's edge is the floor
+        .to(floor, { y: () => G.floorRise, duration: 0.34 }, 0.04)
+        .to(floor, { autoAlpha: 0, duration: 0.1, ease: 'power1.in' }, 0.2)
         .fromTo('.packs-head', { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.08, ease: 'power2.out' }, 0.3)
         .fromTo('.packs li', { autoAlpha: 0, x: -16 }, { autoAlpha: 1, x: 0, duration: 0.07, stagger: 0.025, ease: 'power2.out' }, 0.33)
         .set('.leads', { autoAlpha: 1 }, 0.36)
@@ -190,7 +192,9 @@ export default function Stage({ booked }: { booked: Booked }) {
         // scene 2 → 3: the packages clear, the tooth rises into the ring with the floor line, the form comes up
         .to(['.packs-head', '.packs li', '.leads'], { autoAlpha: 0, y: -12, duration: 0.07, ease: 'power1.in' }, 0.6)
         .to(canvas, { x: () => G.b.x, y: () => G.b.y, scale: () => G.b.scale, duration: 0.16 }, 0.63)
-        .to(floor, { y: () => G.ringY, '--cut': '0px', duration: 0.16 }, 0.63)
+        // and comes back rising with the tooth, to part round the ring
+        .to(floor, { y: () => G.ringY, duration: 0.16 }, 0.63)
+        .to(floor, { autoAlpha: 1, duration: 0.08, ease: 'power1.out' }, 0.65)
         .fromTo('.rings .ring', { strokeDasharray: 2000, strokeDashoffset: 2000 }, { strokeDashoffset: 0, duration: 0.12 }, 0.72)
         .fromTo('.rings .orbit', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.08 }, 0.76)
         .to(floor, { autoAlpha: 0, duration: 0.05 }, 0.8)
