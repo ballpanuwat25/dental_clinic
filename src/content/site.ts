@@ -83,6 +83,8 @@ export const booking = {
   full: 'วันนี้เต็มแล้ว ลองหมอคนอื่น',
   depositNote: `มัดจำ ${clinic.deposit} บาท หักจากค่ารักษาในวันนัด`,
   next: 'ถัดไป · กรอกชื่อ',
+  // until the details, deposit and back office are built, the demo says plainly where it stops
+  demoStop: 'เดโมนี้จบที่ขั้นเลือกเวลา ขั้นกรอกชื่อ มัดจำพร้อมเพย์ และหลังบ้านของคลินิกกำลังตามมา',
   via: 'มัดจำผ่านพร้อมเพย์',
 };
 
@@ -112,3 +114,11 @@ export const where = {
 
 export const loader = 'ฟ้าใส ทันตกรรม';
 
+// the 404: the molar's place in the number is an empty socket, drawn dashed
+export const lost = {
+  title: 'ไม่พบหน้านี้',
+  heading: 'หน้านี้ไม่มีในคลินิกเรา',
+  text: 'ลิงก์อาจพิมพ์ผิด หรือหน้านี้ถูกย้ายไปแล้ว กลับไปหน้าแรก หรือดูเวลาว่างแล้วจองได้เลย',
+  home: 'กลับหน้าแรก',
+  book: 'ดูเวลาว่าง',
+};

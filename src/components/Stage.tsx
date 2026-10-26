@@ -104,7 +104,6 @@ export default function Stage({ booked }: { booked: Booked }) {
       const G = { p: { x: 0, y: 0, scale: 1 }, b: { x: 0, y: 0, scale: 1 }, floorRise: 0, ringY: 0 };
       function layout() {
         const W = stage.clientWidth;
-        const H = stage.clientHeight;
         const floorY = floor.offsetTop;
 
         // the tooth stands centred in the gap between the two words' ink (each word's box is its ink)
@@ -213,7 +212,13 @@ export default function Stage({ booked }: { booked: Booked }) {
       const onRefreshInit = () => { gsap.set(canvas, { clearProps: 'x,y,scale' }); };
       ScrollTrigger.addEventListener('refreshInit', onRefreshInit);
       ScrollTrigger.addEventListener('refresh', layout);
-      document.fonts.ready.then(() => ScrollTrigger.refresh());
+      document.fonts.ready.then(() => {
+        ScrollTrigger.refresh();
+        // arriving on /#book or /#services (the 404 links there): the browser cannot find a scene inside the
+        // pin, so go to where it is in place
+        const hash = location.hash.slice(1);
+        if (hash === 'services' || hash === 'book') scrollTo(0, st.start + (st.end - st.start) * AT[hash]);
+      });
 
       return () => {
         stage.removeEventListener('pointermove', onMove);

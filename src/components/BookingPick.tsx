@@ -13,6 +13,7 @@ export default function BookingPick({ booked }: { booked: Booked }) {
   const [doctor, setDoctor] = useState(doctors[0].id);
   const [time, setTime] = useState<number | null>(null);
   const [from, setFrom] = useState<number | null>(null);
+  const [stopped, setStopped] = useState(false);
 
   // a row in the team section can pick the dentist
   useEffect(() => {
@@ -67,8 +68,9 @@ export default function BookingPick({ booked }: { booked: Booked }) {
           {services.find((s) => s.id === service)!.name} · {who.short}{picked !== null ? ` · ${hhmm(picked)}` : ''}
           <small>{booking.depositNote}</small>
         </p>
-        <a className="book" href="#book">{booking.next}</a>
+        <button className="book" type="button" onClick={() => setStopped(true)}>{booking.next}</button>
       </div>
+      <p className="sum-note" role="status">{stopped ? booking.demoStop : ''}</p>
     </form>
   );
 }

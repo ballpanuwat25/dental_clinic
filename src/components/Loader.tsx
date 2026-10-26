@@ -35,7 +35,8 @@ export default function Loader() {
     let shown = 0;
     let opened = false;
     const tick = () => {
-      const t = performance.now() - born;
+      // the first frame's time can be from just before the effect ran
+      const t = Math.max(0, performance.now() - born);
       // never faster than MIN_MS; on a slow connection the real progress holds it back
       const goal = Math.min(fonts * 0.2 + frames * 0.8, fast ? 1 : t / MIN_MS);
       shown += (goal - shown) * 0.16;
@@ -45,6 +46,7 @@ export default function Loader() {
       if ((shown >= 1 || t > MAX_MS) && !opened) open();
     };
     const open = () => {
+      if (opened) return;
       opened = true;
       gsap.ticker.remove(tick);
       gsap.timeline({ onComplete: () => { el.hidden = true; smooth()?.start(); } })
@@ -52,8 +54,11 @@ export default function Loader() {
         .to(el, { autoAlpha: 0, duration: fast ? 0 : 0.6, ease: 'power1.inOut' }, 0.35);
     };
     gsap.ticker.add(tick);
+    // animation frames pause in a background tab; a plain timer still opens the page
+    const fallback = window.setTimeout(open, MAX_MS + 500);
 
     return () => {
+      window.clearTimeout(fallback);
       gsap.ticker.remove(tick);
       removeEventListener(FRAMES_LOADED, onFrames);
     };
